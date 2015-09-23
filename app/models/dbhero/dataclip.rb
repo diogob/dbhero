@@ -45,8 +45,8 @@ module Dbhero
       end
     end
 
-    def csv_string
-      query_result
+    def csv_string params={}
+      query_result params
       csv_string = CSV.generate(force_quotes: true) do |csv|
         csv << @q_result.columns
         @q_result.rows.each { |row| csv << row }

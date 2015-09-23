@@ -2,7 +2,7 @@
   == render 'form'
 - if @dataclip.valid? && @dataclip.q_result
   .section
-    .row.fetch-remote-clip-table data-path=dataclip_path(@dataclip)
+    .row.fetch-remote-clip-table data-path=dataclip_path(@dataclip, params.except(:action, :controller, :id, :format))
       .col.s12.center-align
         .preloader-wrapper.big.active
           .spinner-layer.spinner-blue-only

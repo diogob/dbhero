@@ -18,9 +18,9 @@
   
         ul id='export-drop' class='dropdown-content'
           li
-            = link_to 'csv', dataclip_path(@dataclip, format: 'csv')
+            = link_to 'csv', dataclip_path(@dataclip, params.except(:action, :controller, :id, :format).merge({format: 'csv'}))
           li
-            = link_to 'google drive', dataclip_path(@dataclip, export_gdrive: true)
+            = link_to 'google drive', dataclip_path(@dataclip, params.except(:action, :controller, :id, :format).merge({export_gdrive: true}))
   
       .col.s12 style="overflow: auto;"
         table#clip_table.cell-border.striped data-page-length='300'

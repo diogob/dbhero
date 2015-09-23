@@ -27,7 +27,7 @@ module Dbhero
 
     def show
       check_auth if @dataclip.private?
-      @dataclip.query_result params
+      @dataclip.query_result params.permit!
 
       respond_to do |format|
         format.html do
@@ -40,7 +40,7 @@ module Dbhero
         end
 
         format.csv do
-          send_data @dataclip.csv_string, type: Mime::CSV, disposition: "attachment; filename=#{@dataclip.token}.csv"
+          send_data @dataclip.csv_string(params.permit!), type: Mime::CSV, disposition: "attachment; filename=#{@dataclip.token}.csv"
         end
       end
     end
@@ -50,7 +50,7 @@ module Dbhero
     end
 
     def edit
-      @dataclip.query_result
+      @dataclip.query_result params.permit!
     end
 
     def create
