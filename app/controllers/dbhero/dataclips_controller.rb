@@ -27,7 +27,7 @@ module Dbhero
 
     def show
       check_auth if @dataclip.private?
-      @dataclip.query_result
+      @dataclip.query_result params
 
       respond_to do |format|
         format.html do

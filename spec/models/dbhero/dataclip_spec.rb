@@ -72,6 +72,21 @@ RSpec.describe Dbhero::Dataclip, type: :model do
   end
 
   context "#query_result" do
+    context "executes raw_query passing parameters and return they result on q_result" do
+      let(:dataclip) { create(:dataclip, raw_query: "select 'foo'::text as bar, 'bar'::text as foo where 'text' = :falsy") }
+      before { dataclip.query_result({'falsy' => 'false'}) }
+      subject { dataclip.q_result }
+
+      it "should be kind of ActiveRecord::Result" do
+        is_expected.to be_an_instance_of(ActiveRecord::Result)
+      end
+
+      it "explore on result set" do
+        expect(subject.columns).to eq(["bar", "foo"])
+        expect(subject.rows).to eq([])
+      end
+    end
+
     context "executes raw_query and return they result on q_result" do
       let(:dataclip) { create(:dataclip, raw_query: "select 'foo'::text as bar, 'bar'::text as foo") }
       before { dataclip.query_result }

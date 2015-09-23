@@ -30,10 +30,14 @@ module Dbhero
       @total_rows ||= @q_result.rows.length
     end
 
-    def query_result
+    def query_result params={}
+      query = self.raw_query.clone
+      self.raw_query.scan(/\s:\w+/) do |match|
+        query.gsub!(match, ActiveRecord::Base.sanitize(params[match[2, match.size]]))
+      end
       Dataclip.transaction do
         begin
-          @q_result ||= ActiveRecord::Base.connection.select_all(self.raw_query)
+          @q_result ||= ActiveRecord::Base.connection.select_all(query)
         rescue => e
           self.errors.add(:base, e.message)
         end
