@@ -10,6 +10,7 @@ module Dbhero
     before_action :set_dataclip, only: [:show, :edit, :update, :destroy]
     has_scope :search
     respond_to :html, :csv
+    helper_method :csv_path
 
     def index
       @dataclips = apply_scopes(Dataclip.ordered)
@@ -19,10 +20,10 @@ module Dbhero
       token = session.delete(:clip_token)
 
       google_client.fetch_access_token!(params[:code])
-      google_client.options[:import_data_url] = dataclip_url(id: token, format: 'csv')
+      google_client.options[:import_data_url] = dataclip_url(session[:extra_params].merge(id: token, format: 'csv'))
       google_client.export_clip_by_token token
 
-      redirect_to dataclip_path(google_client.dataclip, gdrive_file_url: google_client.exported_file_url)
+      redirect_to dataclip_path(google_client.dataclip, session[:extra_params].merge(gdrive_file_url: google_client.exported_file_url))
     end
 
     def show
@@ -35,6 +36,7 @@ module Dbhero
 
           if params[:export_gdrive]
             session[:clip_token] = @dataclip.token
+            session[:extra_params] = params.permit!.except(:export_gdrive, :id)
             redirect_to google_client.auth.authorization_uri.to_s
           end
         end
